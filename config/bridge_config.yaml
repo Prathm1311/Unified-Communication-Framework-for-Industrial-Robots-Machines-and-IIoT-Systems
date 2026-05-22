@@ -1,0 +1,111 @@
+# =============================================================================
+# bridge_config.yaml
+# RobotBridge topic mapping configuration
+# =============================================================================
+#
+# Edit this file to add, remove, or modify topic mappings.
+# No code changes are required — just restart RobotBridge after saving.
+#
+# Direction values:
+#   ros2_to_external  – Robot publishes → MQTT + REST cache receive the data
+#   external_to_ros2  – MQTT message or REST POST → Robot receives the command
+#   bidirectional     – Both of the above are active simultaneously
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# ROS2 node configuration
+# ---------------------------------------------------------------------------
+ros2:
+  node_name: robot_bridge_node   # name of the rclpy node
+
+# ---------------------------------------------------------------------------
+# MQTT broker configuration
+# ---------------------------------------------------------------------------
+mqtt:
+  broker_host: localhost    # Change to your broker's IP if on another machine
+  broker_port: 1883
+  client_id:   robot_bridge
+  keepalive:   60
+  qos:         0
+
+  # Uncomment and fill in to use TLS
+  # tls:
+  #   enabled:  true
+  #   ca_certs: /path/to/ca.crt
+  #   certfile: /path/to/client.crt
+  #   keyfile:  /path/to/client.key
+
+  # Uncomment to use username/password authentication
+  # username: myuser
+  # password: mypassword
+
+# ---------------------------------------------------------------------------
+# REST API server configuration
+# ---------------------------------------------------------------------------
+rest:
+  host:      "0.0.0.0"    # Bind to all interfaces; use 127.0.0.1 for local only
+  port:      8000
+  log_level: "warning"    # uvicorn log level: debug|info|warning|error|critical
+
+# ---------------------------------------------------------------------------
+# Topic mappings
+# ---------------------------------------------------------------------------
+# Each mapping must have ALL of these fields:
+#
+#   name          – unique identifier used internally and in REST paths
+#   ros2_topic    – the actual ROS2 topic string (must start with /)
+#   ros2_msg_type – ROS2 message type in "package/msg/TypeName" format
+#   mqtt_topic    – the MQTT topic string (no leading /)
+#   rest_endpoint – REST URL path (must start with /)
+#   direction     – one of: ros2_to_external, external_to_ros2, bidirectional
+# ---------------------------------------------------------------------------
+
+mappings:
+
+  # ---- Telemetry: robot → dashboard -------------------------------------
+
+  - name:          robot_pose
+    ros2_topic:    /robot/pose
+    ros2_msg_type: geometry_msgs/msg/PoseStamped
+    mqtt_topic:    robot/telemetry/pose
+    rest_endpoint: /telemetry/pose
+    direction:     ros2_to_external
+
+  - name:          battery_status
+    ros2_topic:    /robot/battery_state
+    ros2_msg_type: sensor_msgs/msg/BatteryState
+    mqtt_topic:    robot/telemetry/battery
+    rest_endpoint: /telemetry/battery
+    direction:     ros2_to_external
+
+  - name:          odometry
+    ros2_topic:    /odom
+    ros2_msg_type: nav_msgs/msg/Odometry
+    mqtt_topic:    robot/telemetry/odom
+    rest_endpoint: /telemetry/odom
+    direction:     ros2_to_external
+
+  # ---- Commands: dashboard → robot -------------------------------------
+
+  - name:          cmd_vel
+    ros2_topic:    /cmd_vel
+    ros2_msg_type: geometry_msgs/msg/Twist
+    mqtt_topic:    robot/command/cmd_vel
+    rest_endpoint: /command/cmd_vel
+    direction:     external_to_ros2
+
+  - name:          emergency_stop
+    ros2_topic:    /robot/estop
+    ros2_msg_type: std_msgs/msg/Bool
+    mqtt_topic:    robot/command/estop
+    rest_endpoint: /command/estop
+    direction:     external_to_ros2
+
+  # ---- Bidirectional: status string ------------------------------------
+
+  - name:          robot_status
+    ros2_topic:    /robot/status
+    ros2_msg_type: std_msgs/msg/String
+    mqtt_topic:    robot/status
+    rest_endpoint: /telemetry/status
+    direction:     bidirectional

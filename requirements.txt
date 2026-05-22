@@ -1,0 +1,19 @@
+# RobotBridge Python dependencies
+# Install with: pip install -r requirements.txt
+
+# MQTT client
+paho-mqtt>=1.6
+
+# REST framework and server
+fastapi>=0.100
+uvicorn[standard]>=0.23
+
+# Configuration parsing
+pyyaml>=6.0
+
+# Data validation (used by FastAPI)
+pydantic>=2.0
+
+# ---- Development / test dependencies ----
+pytest>=7.0
+pytest-asyncio>=0.21

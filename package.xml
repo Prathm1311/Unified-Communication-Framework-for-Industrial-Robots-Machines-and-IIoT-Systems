@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>robot_bridge</name>
+  <version>0.1.0</version>
+  <description>
+    Middleware bridge between ROS2-based robots and external MQTT/REST applications.
+    Subscribes to ROS2 topics, converts messages to JSON, and forwards them through
+    MQTT or exposes them through REST endpoints — and vice versa.
+  </description>
+
+  <maintainer email="robotbridge@example.com">RobotBridge Contributors</maintainer>
+  <license>MIT</license>
+
+  <!-- Build tooling -->
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <!-- ROS2 runtime deps -->
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <!-- Python runtime deps (PIP packages; documented for reference) -->
+  <!-- paho-mqtt, fastapi, uvicorn, pyyaml, pydantic are installed via pip -->
+
+  <!-- Test deps -->
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
